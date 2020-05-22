@@ -1,6 +1,12 @@
 Change Log
 ===========
 
+0.1.56
+------
+- Fix bugs in sustainability parsing earnings and holders. Tested with many symbols without
+  exceptions.
+- Remove space from dataframe columns: Adj Close -> AdjClose Stock Splits -> StockSplits
+
 0.1.54
 ------
 - ISIN lookup working with intl. tickers
