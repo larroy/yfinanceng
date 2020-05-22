@@ -20,20 +20,12 @@ Yahoo! Finance-ng python3 / pandas market data downloader
     :target: https://pypi.python.org/pypi/yfinanceng
     :alt: PyPi downloads
 
-.. image:: https://img.shields.io/travis/larroy/yfinanceng/master.svg?maxAge=1
-    :target: https://travis-ci.com/larroy/yfinanceng
-    :alt: Travis-CI build status
-
-.. image:: https://www.codefactor.io/repository/github/larroy/yfinanceng/badge
-    :target: https://www.codefactor.io/repository/github/larroy/yfinanceng
-    :alt: CodeFactor
-
 .. image:: https://img.shields.io/github/stars/larroy/yfinanceng.svg?style=social&label=Star&maxAge=60
     :target: https://github.com/larroy/yfinanceng
     :alt: Star this repo
 
 .. image:: https://img.shields.io/twitter/follow/larroy.svg?style=social&label=Follow&maxAge=60
-    :target: https://twitter.com/larroy
+    :target: https://twitter.com/plarroy
     :alt: Follow me on twitter
 
 \
