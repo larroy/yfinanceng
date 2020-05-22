@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Yahoo! Finance market data downloader (+fix for Pandas Datareader)
-# https://github.com/ranaroussi/yfinance
+# Yahoo! Finance next gen python3 / pandas market data downloader
 #
 # Copyright 2017-2019 Ran Aroussi
 #

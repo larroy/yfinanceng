@@ -1,36 +1,36 @@
-Yahoo! Finance market data downloader
-=====================================
+Yahoo! Finance-ng python3 / pandas market data downloader
+=========================================================
 
-.. image:: https://img.shields.io/badge/python-2.7,%203.4+-blue.svg?style=flat
-    :target: https://pypi.python.org/pypi/yfinance
+.. image:: https://img.shields.io/badge/python-3.6+-blue.svg?style=flat
+    :target: https://pypi.python.org/pypi/yfinanceng
     :alt: Python version
 
-.. image:: https://img.shields.io/pypi/v/yfinance.svg?maxAge=60
-    :target: https://pypi.python.org/pypi/yfinance
+.. image:: https://img.shields.io/pypi/v/yfinanceng.svg?maxAge=60
+    :target: https://pypi.python.org/pypi/yfinanceng
     :alt: PyPi version
 
-.. image:: https://img.shields.io/pypi/status/yfinance.svg?maxAge=60
-    :target: https://pypi.python.org/pypi/yfinance
+.. image:: https://img.shields.io/pypi/status/yfinanceng.svg?maxAge=60
+    :target: https://pypi.python.org/pypi/yfinanceng
     :alt: PyPi status
 
-.. image:: https://img.shields.io/pypi/dm/yfinance.svg?maxAge=2592000&label=installs&color=%2327B1FF
-    :target: https://pypi.python.org/pypi/yfinance
+.. image:: https://img.shields.io/pypi/dm/yfinanceng.svg?maxAge=2592000&label=installs&color=%2327B1FF
+    :target: https://pypi.python.org/pypi/yfinanceng
     :alt: PyPi downloads
 
-.. image:: https://img.shields.io/travis/ranaroussi/yfinance/master.svg?maxAge=1
-    :target: https://travis-ci.com/ranaroussi/yfinance
+.. image:: https://img.shields.io/travis/larroy/yfinanceng/master.svg?maxAge=1
+    :target: https://travis-ci.com/larroy/yfinanceng
     :alt: Travis-CI build status
 
-.. image:: https://www.codefactor.io/repository/github/ranaroussi/yfinance/badge
-    :target: https://www.codefactor.io/repository/github/ranaroussi/yfinance
+.. image:: https://www.codefactor.io/repository/github/larroy/yfinanceng/badge
+    :target: https://www.codefactor.io/repository/github/larroy/yfinanceng
     :alt: CodeFactor
 
-.. image:: https://img.shields.io/github/stars/ranaroussi/yfinance.svg?style=social&label=Star&maxAge=60
-    :target: https://github.com/ranaroussi/yfinance
+.. image:: https://img.shields.io/github/stars/larroy/yfinanceng.svg?style=social&label=Star&maxAge=60
+    :target: https://github.com/larroy/yfinanceng
     :alt: Star this repo
 
-.. image:: https://img.shields.io/twitter/follow/aroussi.svg?style=social&label=Follow&maxAge=60
-    :target: https://twitter.com/aroussi
+.. image:: https://img.shields.io/twitter/follow/larroy.svg?style=social&label=Follow&maxAge=60
+    :target: https://twitter.com/larroy
     :alt: Follow me on twitter
 
 \
@@ -38,23 +38,19 @@ Yahoo! Finance market data downloader
 Ever since `Yahoo! finance <https://finance.yahoo.com>`_ decommissioned
 their historical data API, many programs that relied on it to stop working.
 
-**yfinance** aimes to solve this problem by offering a reliable, threaded,
+**yfinanceng** aimes to solve this problem by offering a reliable, threaded,
 and Pythonic way to download historical market data from Yahoo! finance.
 
 
 NOTE
 ~~~~
 
-The library was originally named ``fix-yahoo-finance``, but
-I've since renamed it to ``yfinance`` as I no longer consider it a mere "fix".
-For reasons of backward-competability, ``fix-yahoo-finance`` now import and
-uses ``yfinance``, but you should install and use ``yfinance`` directly.
+The library was originally named ``yfinance``, but
+I've since renamed it to ``yfinanceng`` as I no longer consider it a mere "fix", and the author is
+not promptly maintaining it or merging PRs.
 
 `Changelog » <./CHANGELOG.rst>`__
 
------
-
-==> Check out this `Blog post <https://aroussi.com/#post/python-yahoo-finance>`_ for a detailed tutorial with code examples.
 
 -----
 
@@ -69,7 +65,7 @@ ticker data in amore Pythonic way:
 
 .. code:: python
 
-    import yfinance as yf
+    import yfinanceng as yf
 
     msft = yf.Ticker("MSFT")
 
@@ -134,7 +130,7 @@ If you want to use a proxy server for downloading data, use:
 
 .. code:: python
 
-    import yfinance as yf
+    import yfinanceng as yf
 
     msft = yf.Ticker("MSFT")
 
@@ -151,7 +147,7 @@ To initialize multiple ``Ticker`` objects, use
 
 .. code:: python
 
-    import yfinance as yf
+    import yfinanceng as yf
 
     tickers = yf.Tickers('msft aapl goog')
     # ^ returns a named tuple of Ticker objects
@@ -167,7 +163,7 @@ Fetching data for multiple tickers
 
 .. code:: python
 
-    import yfinance as yf
+    import yfinanceng as yf
     data = yf.download("SPY AAPL", start="2017-01-01", end="2017-04-30")
 
 
@@ -216,14 +212,14 @@ I've also added some options to make life easier :)
 
 If your code uses ``pandas_datareader`` and you want to download data faster,
 you can "hijack" ``pandas_datareader.data.get_data_yahoo()`` method to use
-**yfinance** while making sure the returned data is in the same format as
+**yfinanceng** while making sure the returned data is in the same format as
 **pandas_datareader**'s ``get_data_yahoo()``.
 
 .. code:: python
 
     from pandas_datareader import data as pdr
 
-    import yfinance as yf
+    import yfinanceng as yf
     yf.pdr_override() # <== that's all it takes :-)
 
     # download dataframe
@@ -233,24 +229,24 @@ you can "hijack" ``pandas_datareader.data.get_data_yahoo()`` method to use
 Installation
 ------------
 
-Install ``yfinance`` using ``pip``:
+Install ``yfinanceng`` using ``pip``:
 
 .. code:: bash
 
-    $ pip install yfinance --upgrade --no-cache-dir
+    $ pip install yfinanceng --upgrade --no-cache-dir
 
 
-Install ``yfinance`` using ``conda``:
+Install ``yfinanceng`` using ``conda``:
 
 .. code:: bash
 
-    $ conda install -c ranaroussi yfinance
+    $ conda install -c larroy yfinanceng
 
 
 Requirements
 ------------
 
-* `Python <https://www.python.org>`_ >= 2.7, 3.4+
+* `Python <https://www.python.org>`_ >= 3.6+
 * `Pandas <https://github.com/pydata/pandas>`_ (tested to work with >=0.23.1)
 * `Numpy <http://www.numpy.org>`_ >= 1.11.1
 * `requests <http://docs.python-requests.org/en/master/>`_ >= 2.14.2
@@ -264,12 +260,7 @@ Optional (if you want to use ``pandas_datareader``)
 Legal Stuff
 ------------
 
-**yfinance** is distributed under the **Apache Software License**. See the `LICENSE.txt <./LICENSE.txt>`_ file in the release for details.
+**yfinanceng** is distributed under the **Apache Software License**. See the `LICENSE.txt <./LICENSE.txt>`_ file in the release for details.
 
 
-P.S.
-------------
-
-Please drop me an note with any feedback you have.
-
-**Ran Aroussi**
+Based on **yfinance** from **Ran Aroussi**.

@@ -1,5 +1,5 @@
-{% set name = "yfinance" %}
-{% set version = "0.1.48" %}
+{% set name = "yfinanceng" %}
+{% set version = "0.1.56" %}
 
 package:
   name: "{{ name|lower }}"
@@ -31,18 +31,18 @@ requirements:
 
 test:
   imports:
-    - yfinance
+    - yfinanceng
 
 about:
-  home: "https://github.com/ranaroussi/yfinance"
+  home: "https://github.com/larroy/yfinanceng"
   license: "Apache Software"
   license_family: "APACHE"
   license_file: ""
   summary: "Yahoo! Finance market data downloader"
   description:
-  doc_url: "https://github.com/ranaroussi/yfinance"
-  dev_url: "https://pypi.python.org/pypi/yfinance"
-  doc_source_url: https://github.com/ranaroussi/yfinance/blob/master/README.rst
+  doc_url: "https://github.com/larroy/yfinanceng"
+  dev_url: "https://pypi.python.org/pypi/yfinanceng"
+  doc_source_url: https://github.com/larroy/yfinanceng/blob/master/README.rst
 
 
 extra:

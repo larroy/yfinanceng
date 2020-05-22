@@ -1,8 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
-# Yahoo! Finance market data downloader (+fix for Pandas Datareader)
-# https://github.com/ranaroussi/yfinance
 
 """
 Sanity check for most common library uses all working
@@ -15,10 +13,10 @@ Sanity check for most common library uses all working
 """
 
 from __future__ import print_function
-import yfinance as yf
+import yfinanceng as yf
 
 
-def test_yfinance():
+def test_yfinanceng():
     for symbol in ["MSFT", "IWO", "VFINX", "^GSPC", "BTC-USD"]:
         print(">>", symbol, end=" ... ")
         ticker = yf.Ticker(symbol)
@@ -45,4 +43,4 @@ def test_not_existing():
 
 
 if __name__ == "__main__":
-    test_yfinance()
+    test_yfinanceng()
