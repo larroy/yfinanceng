@@ -32,7 +32,7 @@ with io.open(path.join(here, "README.rst"), encoding="utf-8") as f:
 
 setup(
     name="yfinanceng",
-    version="0.1.56",
+    version="0.1.57",
     description="Yahoo! Finance market data downloader",
     long_description=long_description,
     url="https://github.com/larroy/yfinanceng",
