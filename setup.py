@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 #
-# Yahoo! Finance ng python / pandas market data downloader 
+# Yahoo! Finance ng python / pandas market data downloader
 
 """Yahoo! Finance market data downloader (+fix for Pandas Datareader)"""
 
@@ -19,7 +19,7 @@ INSTALL_REQUIRES = [
     "multitasking>=0.0.7",
     "lxml",
     "beautifulsoup4==4.9.0",
-    "html5lib"
+    "html5lib",
 ]
 EXTRAS_REQUIRE = {"test": ["tox", "flake8", "black", "mock", "pre-commit", "nose"]}
 
@@ -58,10 +58,10 @@ setup(
     ],
     platforms=["any"],
     keywords="pandas, yahoo finance, pandas datareader",
-    packages=find_packages(exclude=["contrib", "docs", "tests", "examples","util"]),
-    #packages=find_packages("yfinanceng"),
+    packages=find_packages(exclude=["contrib", "docs", "tests", "examples", "util"]),
+    # packages=find_packages("yfinanceng"),
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
-    python_requires='>=3.6',
+    python_requires=">=3.6",
     entry_points={"console_scripts": ["sample=sample:main",],},
 )
