@@ -2,6 +2,7 @@ Yahoo! Finance-ng python3 / pandas market data downloader
 =========================================================
 
 .. image:: https://github.com/larroy/yfinanceng/workflows/Python%20package/badge.svg
+    :target: https://github.com/larroy/yfinanceng/actions
     :alt: Build
 
 .. image:: https://img.shields.io/badge/python-3.6+-blue.svg?style=flat
