@@ -21,7 +21,7 @@ INSTALL_REQUIRES = [
     "beautifulsoup4==4.9.0",
     "html5lib",
 ]
-EXTRAS_REQUIRE = {"test": ["tox", "flake8", "black", "mock", "pre-commit", "nose"]}
+EXTRAS_REQUIRE = {"test": ["tox", "flake8", "black", "mock", "pre-commit", "nose", "pytest"]}
 
 
 here = path.abspath(path.dirname(__file__))
