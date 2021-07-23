@@ -163,7 +163,7 @@ class TickerBase:
 
         # Getting data from json
         url = "{}/v8/finance/chart/{}".format(self._base_url, self.ticker)
-        data = _requests.get(url=url, params=params, proxies=proxy)
+        data = _requests.get(url=url, headers={'User-Agent': 'yfinanceng'}, params=params, proxies=proxy)
         if "Will be right back" in data.text:
             raise RuntimeError(
                 "*** YAHOO! FINANCE IS CURRENTLY DOWN! ***\n"

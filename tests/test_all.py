@@ -17,7 +17,7 @@ import yfinanceng as yf
 
 
 def test_yfinanceng():
-    for symbol in ["MSFT", "IWO", "VFINX", "^GSPC", "BTC-USD"]:
+    for symbol in ["MSFT", "VFINX", "^GSPC", "BTC-USD"]:
         print(">>", symbol, end=" ... ")
         ticker = yf.Ticker(symbol)
 
