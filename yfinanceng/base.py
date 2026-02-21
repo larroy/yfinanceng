@@ -130,7 +130,11 @@ class TickerBase:
 
         if start or period is None or period.lower() == "max":
             if start is None:
-                start = int((_datetime.datetime.now() - _datetime.timedelta(days=100 * 365)).timestamp())
+                start = int(
+                    (
+                        _datetime.datetime.now() - _datetime.timedelta(days=100 * 365)
+                    ).timestamp()
+                )
             elif isinstance(start, _datetime.datetime):
                 start = int(_time.mktime(start.timetuple()))
             else:
@@ -163,7 +167,9 @@ class TickerBase:
 
         # Getting data from json
         url = "{}/v8/finance/chart/{}".format(self._base_url, self.ticker)
-        data = _requests.get(url=url, headers={'User-Agent': 'yfinanceng'}, params=params, proxies=proxy)
+        data = _requests.get(
+            url=url, headers={"User-Agent": "yfinanceng"}, params=params, proxies=proxy
+        )
         if "Will be right back" in data.text:
             raise RuntimeError(
                 "*** YAHOO! FINANCE IS CURRENTLY DOWN! ***\n"
@@ -186,7 +192,11 @@ class TickerBase:
                 print("- %s: %s" % (self.ticker, err_msg))
             return shared._DFS[self.ticker]
 
-        elif "chart" not in data or data["chart"]["result"] is None or not data["chart"]["result"]:
+        elif (
+            "chart" not in data
+            or data["chart"]["result"] is None
+            or not data["chart"]["result"]
+        ):
             shared._DFS[self.ticker] = utils.empty_df()
             shared._ERRORS[self.ticker] = err_msg
             if "many" not in kwargs and debug_mode:
@@ -242,11 +252,15 @@ class TickerBase:
 
         # combine
         df = _pd.concat([quotes, dividends, splits], axis=1, sort=True)
-        df["Dividends"].fillna(0, inplace=True)
-        df["StockSplits"].fillna(0, inplace=True)
+        df["Dividends"] = df["Dividends"].fillna(0)
+        df["StockSplits"] = df["StockSplits"].fillna(0)
 
         # index eod/intraday
-        df.index = df.index.tz_localize("UTC").tz_convert(data["chart"]["result"][0]["meta"]["exchangeTimezoneName"])
+        if not isinstance(df.index, _pd.DatetimeIndex):
+            df.index = _pd.to_datetime(df.index)
+        df.index = df.index.tz_localize("UTC").tz_convert(
+            data["chart"]["result"][0]["meta"]["exchangeTimezoneName"]
+        )
 
         if params["interval"][-1] == "m":
             df.index.name = "Datetime"
@@ -325,9 +339,15 @@ class TickerBase:
                 self._institutional_holders["Date Reported"] = _pd.to_datetime(
                     self._institutional_holders["Date Reported"]
                 )
-            if isinstance(self._institutional_holders, _pd.DataFrame) and "% Out" in self._institutional_holders:
+            if (
+                isinstance(self._institutional_holders, _pd.DataFrame)
+                and "% Out" in self._institutional_holders
+            ):
                 self._institutional_holders["% Out"] = (
-                    self._institutional_holders["% Out"].str.replace("%", "").astype(float) / 100
+                    self._institutional_holders["% Out"]
+                    .str.replace("%", "")
+                    .astype(float)
+                    / 100
                 )
         except:
             self._major_holders = _pd.DataFrame()
@@ -346,7 +366,9 @@ class TickerBase:
                     s[s.index == "ratingYear"]["Value"].values[0],
                     s[s.index == "ratingMonth"]["Value"].values[0],
                 )
-                self._sustainability = s[~s.index.isin(["maxAge", "ratingYear", "ratingMonth"])]
+                self._sustainability = s[
+                    ~s.index.isin(["maxAge", "ratingYear", "ratingMonth"])
+                ]
             else:
                 self._sustainability = _pd.DataFrame()
 
@@ -365,7 +387,9 @@ class TickerBase:
         self._info["regularMarketPrice"] = self._info.get("regularMarketOpen")
         self._info["logo_url"] = ""
         try:
-            domain = self._info["website"].split("://")[1].split("/")[0].replace("www.", "")
+            domain = (
+                self._info["website"].split("://")[1].split("/")[0].replace("www.", "")
+            )
             self._info["logo_url"] = "https://logo.clearbit.com/%s" % domain
         except Exception:
             pass
@@ -384,14 +408,15 @@ class TickerBase:
 
         # analyst recommendations
         try:
-
             if data["upgradeDowngradeHistory"]["history"]:
                 rec = _pd.DataFrame(data["upgradeDowngradeHistory"]["history"])
                 rec["earningsDate"] = _pd.to_datetime(rec["epochGradeDate"], unit="s")
                 rec.set_index("earningsDate", inplace=True)
                 rec.index.name = "Date"
                 rec.columns = utils.camel2title(rec.columns)
-                self._recommendations = rec[["Firm", "To Grade", "From Grade", "Action"]].sort_index()
+                self._recommendations = rec[
+                    ["Firm", "To Grade", "From Grade", "Action"]
+                ].sort_index()
             else:
                 self._recommendations = _pd.DataFrame()
         except Exception:
@@ -404,9 +429,12 @@ class TickerBase:
         for key in (
             (self._cashflow, "cashflowStatement", "cashflowStatements"),
             (self._balancesheet, "balanceSheet", "balanceSheetStatements"),
-            (self._financials, "incomeStatement", "incomeStatementHistory",),
+            (
+                self._financials,
+                "incomeStatement",
+                "incomeStatementHistory",
+            ),
         ):
-
             item = key[1] + "History"
             if isinstance(data.get(item), dict):
                 if "err" not in data[item]:

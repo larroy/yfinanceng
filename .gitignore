@@ -1,7 +1,8 @@
+venv/
+.idea/
+.python-version
 __pycache__/*
 yfinance/__pycache__/*
 dist
 yfinance.egg-info
 *.pyc
-venv/
-.idea/

@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+requires-python = ">=3.10"
+name = "yfinanceng"
+version = "0.1.58"
+description = "Yahoo! Finance market data downloader"
+readme = "README.rst"
+license = {text = "Apache-2.0"}
+authors = [{name = "Ran Aroussi", email = "pedro.larroy.lists@gmail.com"}]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "pandas>=0.24",
+    "numpy>=1.15",
+    "requests>=2.20",
+    "multitasking>=0.0.7",
+    "lxml",
+    "beautifulsoup4==4.9.0",
+    "html5lib",
+]
+optional-dependencies.test = [
+    "tox",
+    "flake8",
+    "black",
+    "mock",
+    "pre-commit",
+    "nose",
+    "pytest"
+]
+
+[project.urls]
+Homepage = "https://github.com/larroy/yfinanceng"
+
+[project.scripts]
+sample = "sample:main"
+
+[tool.setuptools.packages.find]
+exclude = ["contrib", "docs", "tests", "examples", "util"]
+
+[tool.setuptools.package-dir]
+"" = "."

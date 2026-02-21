@@ -105,7 +105,7 @@ Change Log
 
 0.1.35
 ------
-- Updated requirements
+- Updated dependencies
 
 0.1.34
 ------
@@ -120,7 +120,7 @@ Change Log
 0.1.32
 ------
 - Better error handling
-- Updated min. versions for requirements
+- Updated min. versions for dependencies
 
 0.1.31
 ------
