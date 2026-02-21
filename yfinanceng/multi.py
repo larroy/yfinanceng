@@ -44,7 +44,7 @@ def download(
     prepost=False,
     proxy=None,
     rounding=False,
-    **kwargs
+    **kwargs,
 ):
     """Download yahoo tickers
     :Parameters:
@@ -80,7 +80,11 @@ def download(
     """
 
     # create ticker list
-    tickers = tickers if isinstance(tickers, (list, set, tuple)) else tickers.replace(",", " ").split()
+    tickers = (
+        tickers
+        if isinstance(tickers, (list, set, tuple))
+        else tickers.replace(",", " ").split()
+    )
 
     tickers = list(set([ticker.upper() for ticker in tickers]))
 
@@ -137,7 +141,10 @@ def download(
         shared._PROGRESS_BAR.completed()
 
     if shared._ERRORS:
-        print("\n%.f Failed download%s:" % (len(shared._ERRORS), "s" if len(shared._ERRORS) > 1 else ""))
+        print(
+            "\n%.f Failed download%s:"
+            % (len(shared._ERRORS), "s" if len(shared._ERRORS) > 1 else "")
+        )
         # print(shared._ERRORS)
         print("\n".join(["- %s: %s" % v for v in list(shared._ERRORS.items())]))
 
@@ -168,12 +175,18 @@ def _realign_dfs():
 
     for key in shared._DFS.keys():
         try:
-            shared._DFS[key] = _pd.DataFrame(index=idx, data=shared._DFS[key]).drop_duplicates()
+            shared._DFS[key] = _pd.DataFrame(
+                index=idx, data=shared._DFS[key]
+            ).drop_duplicates()
         except Exception:
-            shared._DFS[key] = _pd.concat([utils.empty_df(idx), shared._DFS[key].dropna()], axis=0, sort=True)
+            shared._DFS[key] = _pd.concat(
+                [utils.empty_df(idx), shared._DFS[key].dropna()], axis=0, sort=True
+            )
 
         # remove duplicate index
-        shared._DFS[key] = shared._DFS[key].loc[~shared._DFS[key].index.duplicated(keep="last")]
+        shared._DFS[key] = shared._DFS[key].loc[
+            ~shared._DFS[key].index.duplicated(keep="last")
+        ]
 
 
 @_multitasking.task
@@ -191,9 +204,18 @@ def _download_one_threaded(
     proxy=None,
     rounding=False,
 ):
-
     data = _download_one(
-        ticker, start, end, auto_adjust, back_adjust, actions, period, interval, prepost, proxy, rounding
+        ticker,
+        start,
+        end,
+        auto_adjust,
+        back_adjust,
+        actions,
+        period,
+        interval,
+        prepost,
+        proxy,
+        rounding,
     )
     shared._DFS[ticker.upper()] = data
     if progress:
@@ -213,7 +235,6 @@ def _download_one(
     proxy=None,
     rounding=False,
 ):
-
     return Ticker(ticker).history(
         period=period,
         interval=interval,

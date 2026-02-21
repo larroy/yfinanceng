@@ -26,7 +26,6 @@ import re as _re
 import pandas as _pd
 import numpy as _np
 import sys as _sys
-import re as _re
 
 import json as _json
 
@@ -55,7 +54,9 @@ def get_json(url, proxy=None):
         if "QuoteSummaryStore" not in html:
             return {}
 
-    json_str = html.split("root.App.main =")[1].split("(this)")[0].split(";\n}")[0].strip()
+    json_str = (
+        html.split("root.App.main =")[1].split("(this)")[0].split(";\n}")[0].strip()
+    )
 
     # 2/29/20 there is a bug where the
     # return value is 7.495B for MSFT other current assets
@@ -89,7 +90,13 @@ def auto_adjust(data):
     df.drop(["Open", "High", "Low", "Close"], axis=1, inplace=True)
 
     df.rename(
-        columns={"Adj Open": "Open", "Adj High": "High", "Adj Low": "Low", "AdjClose": "Close",}, inplace=True,
+        columns={
+            "Adj Open": "Open",
+            "Adj High": "High",
+            "Adj Low": "Low",
+            "AdjClose": "Close",
+        },
+        inplace=True,
     )
 
     df = df[["Open", "High", "Low", "Close", "Volume"]]
@@ -97,7 +104,7 @@ def auto_adjust(data):
 
 
 def back_adjust(data):
-    """ back-adjusted data to mimic true historical prices """
+    """back-adjusted data to mimic true historical prices"""
 
     df = data.copy()
     ratio = df["AdjClose"] / df["Close"]
@@ -108,7 +115,8 @@ def back_adjust(data):
     df.drop(["Open", "High", "Low", "AdjClose"], axis=1, inplace=True)
 
     df.rename(
-        columns={"Adj Open": "Open", "Adj High": "High", "Adj Low": "Low"}, inplace=True,
+        columns={"Adj Open": "Open", "Adj High": "High", "Adj Low": "Low"},
+        inplace=True,
     )
 
     return df[["Open", "High", "Low", "Close", "Volume"]]
@@ -128,7 +136,14 @@ def parse_quotes(data, tz=None):
         adjclose = data["indicators"]["adjclose"][0]["adjclose"]
 
     quotes = _pd.DataFrame(
-        {"Open": opens, "High": highs, "Low": lows, "Close": closes, "AdjClose": adjclose, "Volume": volumes,}
+        {
+            "Open": opens,
+            "High": highs,
+            "Low": lows,
+            "Close": closes,
+            "AdjClose": adjclose,
+            "Volume": volumes,
+        }
     )
 
     quotes.index = _pd.to_datetime(timestamps, unit="s")
@@ -200,16 +215,24 @@ class ProgressBar:
     def update_iteration(self, val=None):
         val = val if val is not None else self.elapsed / float(self.iterations)
         self.__update_amount(val * 100.0)
-        self.prog_bar += "  %s of %s %s" % (self.elapsed, self.iterations, self.text,)
+        self.prog_bar += "  %s of %s %s" % (
+            self.elapsed,
+            self.iterations,
+            self.text,
+        )
 
     def __update_amount(self, new_amount):
         percent_done = int(round((new_amount / 100.0) * 100.0))
         all_full = self.width - 2
         num_hashes = int(round((percent_done / 100.0) * all_full))
-        self.prog_bar = "[" + self.fill_char * num_hashes + " " * (all_full - num_hashes) + "]"
+        self.prog_bar = (
+            "[" + self.fill_char * num_hashes + " " * (all_full - num_hashes) + "]"
+        )
         pct_place = (len(self.prog_bar) // 2) - len(str(percent_done))
         pct_string = "%d%%" % percent_done
-        self.prog_bar = self.prog_bar[0:pct_place] + (pct_string + self.prog_bar[pct_place + len(pct_string) :])
+        self.prog_bar = self.prog_bar[0:pct_place] + (
+            pct_string + self.prog_bar[pct_place + len(pct_string) :]
+        )
 
     def __str__(self):
         return str(self.prog_bar)

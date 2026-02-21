@@ -43,7 +43,9 @@ class Ticker(TickerBase):
         if date is None:
             url = "{}/v7/finance/options/{}".format(self._base_url, self.ticker)
         else:
-            url = "{}/v7/finance/options/{}?date={}".format(self._base_url, self.ticker, date)
+            url = "{}/v7/finance/options/{}?date={}".format(
+                self._base_url, self.ticker, date
+            )
 
         # setup proxy in requests format
         if proxy is not None:
@@ -54,7 +56,9 @@ class Ticker(TickerBase):
         r = _requests.get(url=url, proxies=proxy).json()
         if r["optionChain"]["result"]:
             for exp in r["optionChain"]["result"][0]["expirationDates"]:
-                self._expirations[_datetime.datetime.utcfromtimestamp(exp).strftime("%Y-%m-%d")] = exp
+                self._expirations[
+                    _datetime.datetime.utcfromtimestamp(exp).strftime("%Y-%m-%d")
+                ] = exp
             return r["optionChain"]["result"][0]["options"][0]
         return {}
 
@@ -92,13 +96,17 @@ class Ticker(TickerBase):
             if date not in self._expirations:
                 raise ValueError(
                     "Expiration `%s` cannot be found. "
-                    "Available expiration are: [%s]" % (date, ", ".join(self._expirations))
+                    "Available expiration are: [%s]"
+                    % (date, ", ".join(self._expirations))
                 )
             date = self._expirations[date]
             options = self._download_options(date, proxy=proxy)
 
         return _namedtuple("Options", ["calls", "puts"])(
-            **{"calls": self._options2df(options["calls"], tz=tz), "puts": self._options2df(options["puts"], tz=tz)}
+            **{
+                "calls": self._options2df(options["calls"], tz=tz),
+                "puts": self._options2df(options["puts"], tz=tz),
+            }
         )
 
     # ------------------------

@@ -26,7 +26,9 @@ from collections import namedtuple as _namedtuple
 
 
 def genTickers(tickers):
-    tickers = tickers if isinstance(tickers, list) else tickers.replace(",", " ").split()
+    tickers = (
+        tickers if isinstance(tickers, list) else tickers.replace(",", " ").split()
+    )
     tickers = [ticker.upper() for ticker in tickers]
     ticker_objects = {}
 
@@ -40,14 +42,18 @@ class Tickers:
         return "yfinance.Tickers object <%s>" % ",".join(self.symbols)
 
     def __init__(self, tickers):
-        tickers = tickers if isinstance(tickers, list) else tickers.replace(",", " ").split()
+        tickers = (
+            tickers if isinstance(tickers, list) else tickers.replace(",", " ").split()
+        )
         self.symbols = [ticker.upper() for ticker in tickers]
         ticker_objects = {}
 
         for ticker in self.symbols:
             ticker_objects[ticker] = Ticker(ticker)
 
-        self.tickers = _namedtuple("Tickers", ticker_objects.keys(), rename=True)(*ticker_objects.values())
+        self.tickers = _namedtuple("Tickers", ticker_objects.keys(), rename=True)(
+            *ticker_objects.values()
+        )
 
     def history(
         self,
@@ -62,11 +68,21 @@ class Tickers:
         threads=True,
         group_by="column",
         progress=True,
-        **kwargs
+        **kwargs,
     ):
-
         return self.download(
-            period, interval, start, end, prepost, actions, auto_adjust, proxy, threads, group_by, progress, **kwargs
+            period,
+            interval,
+            start,
+            end,
+            prepost,
+            actions,
+            auto_adjust,
+            proxy,
+            threads,
+            group_by,
+            progress,
+            **kwargs,
         )
 
     def download(
@@ -82,9 +98,8 @@ class Tickers:
         threads=True,
         group_by="column",
         progress=True,
-        **kwargs
+        **kwargs,
     ):
-
         data = multi.download(
             self.symbols,
             start=start,
@@ -98,7 +113,7 @@ class Tickers:
             group_by="ticker",
             threads=threads,
             progress=progress,
-            **kwargs
+            **kwargs,
         )
 
         for symbol in self.symbols:
