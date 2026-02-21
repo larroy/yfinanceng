@@ -349,7 +349,7 @@ class TickerBase:
                     .astype(float)
                     / 100
                 )
-        except:
+        except Exception:
             self._major_holders = _pd.DataFrame()
             self._institutional_holders = _pd.DataFrame()
 

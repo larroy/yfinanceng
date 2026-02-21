@@ -58,3 +58,9 @@ exclude = ["contrib", "docs", "tests", "examples", "util"]
 
 [tool.setuptools.package-dir]
 "" = "."
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+    "pylint>=4.0.5",
+]
