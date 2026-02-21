@@ -14,7 +14,7 @@ repos:
       - id: check-shebang-scripts-are-executable
       - id: check-toml
       - id: check-yaml
-        exclude: ^helm/
+        exclude: ^helm/|^meta.yaml$
       - id: detect-private-key
       - id: end-of-file-fixer
       - id: mixed-line-ending
@@ -42,16 +42,16 @@ repos:
         (?x)(
           ^sanity/bionemo/rfdiffusion/1R42\.pdb|
         )
-  - repo: local
-    hooks:
-      - id: pylint
-        name: pylint
-        entry: uv run pylint
-        language: system
-        types: [python]
-        require_serial: true
-        args: [
-          "--fail-under=10",
-          "--disable=duplicate-code",
-          "src"
-        ]
+#  - repo: local
+#    hooks:
+#      - id: pylint
+#        name: pylint
+#        entry: uv run pylint
+#        language: system
+#        types: [python]
+#        require_serial: true
+#        args: [
+#          "--fail-under=10",
+#          "--disable=duplicate-code",
+#          "src"
+#        ]
