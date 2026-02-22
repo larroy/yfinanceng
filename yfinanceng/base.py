@@ -45,6 +45,7 @@ class TickerBase:
     def __init__(self, ticker):
         self.ticker = ticker.upper()
         self._history = None
+        self._dividends = None
         self._base_url = "https://query1.finance.yahoo.com"
         self._scrape_url = "https://finance.yahoo.com/quote"
 
@@ -187,34 +188,35 @@ class TickerBase:
             debug_mode = kwargs["debug"]
 
         err_msg = "No data found for this date range, symbol may be delisted"
+        empty_df = utils.empty_df()
         if "chart" in data and data["chart"]["error"]:
             err_msg = data["chart"]["error"]["description"]
-            shared._DFS[self.ticker] = utils.empty_df()
+            shared._DFS[self.ticker] = empty_df
             shared._ERRORS[self.ticker] = err_msg
             if "many" not in kwargs and debug_mode:
                 print("- %s: %s" % (self.ticker, err_msg))
-            return shared._DFS[self.ticker]
+            return (empty_df, empty_df)
 
         elif (
             "chart" not in data
             or data["chart"]["result"] is None
             or not data["chart"]["result"]
         ):
-            shared._DFS[self.ticker] = utils.empty_df()
+            shared._DFS[self.ticker] = empty_df
             shared._ERRORS[self.ticker] = err_msg
             if "many" not in kwargs and debug_mode:
                 print("- %s: %s" % (self.ticker, err_msg))
-            return shared._DFS[self.ticker]
+            return (empty_df, empty_df)
 
         # parse quotes
         try:
             quotes = utils.parse_quotes(data["chart"]["result"][0], tz)
         except Exception:
-            shared._DFS[self.ticker] = utils.empty_df()
+            shared._DFS[self.ticker] = empty_df
             shared._ERRORS[self.ticker] = err_msg
             if "many" not in kwargs and debug_mode:
                 print("- %s: %s" % (self.ticker, err_msg))
-            return shared._DFS[self.ticker]
+            return (empty_df, empty_df)
 
         # 2) fix weird bug with Yahoo! - returning 60m for 30m bars
         if interval.lower() == "30m":
@@ -253,8 +255,7 @@ class TickerBase:
         # actions
         dividends, splits = utils.parse_actions(data["chart"]["result"][0], tz)
 
-        # combine
-        # Ensure all DataFrames have the same index to avoid concatenation errors
+        # combine - only include StockSplits in main df, not Dividends
         if len(splits) == 0:
             splits = _pd.DataFrame(index=quotes.index, columns=["StockSplits"])
 
@@ -284,11 +285,12 @@ class TickerBase:
             df.index.name = "Date"
 
         self._history = df.copy()
+        self._dividends = dividends.copy()
 
         if not actions:
             df.drop(columns=["StockSplits"], inplace=True)
 
-        return df
+        return (df, dividends)
 
     # ------------------------
 
@@ -560,10 +562,9 @@ class TickerBase:
         return data
 
     def get_dividends(self, proxy=None):
-        if self._history is None:
+        if self._dividends is None:
             self.history(period="max", proxy=proxy)
-        dividends = self._history["Dividends"]
-        return dividends[dividends != 0]
+        return self._dividends[self._dividends != 0]
 
     def get_splits(self, proxy=None):
         if self._history is None:
@@ -574,7 +575,7 @@ class TickerBase:
     def get_actions(self, proxy=None):
         if self._history is None:
             self.history(period="max", proxy=proxy)
-        actions = self._history[["Dividends", "StockSplits"]]
+        actions = _pd.concat([self._dividends, self._history[["StockSplits"]]], axis=1)
         return actions[actions != 0].dropna(how="all").fillna(0)
 
     def get_isin(self, proxy=None):

@@ -235,7 +235,7 @@ def _download_one(
     proxy=None,
     rounding=False,
 ):
-    return Ticker(ticker).history(
+    hist, _ = Ticker(ticker).history(
         period=period,
         interval=interval,
         start=start,
@@ -248,3 +248,4 @@ def _download_one(
         rounding=rounding,
         many=True,
     )
+    return hist

@@ -60,36 +60,53 @@ class TestTickerInfo:
 class TestTickerHistory:
     """Tests for Ticker.history method"""
 
-    def test_history_returns_dataframe(self):
-        """history should return a pandas DataFrame"""
+    def test_history_returns_tuple(self):
+        """history should return a tuple of two dataframes"""
         ticker = yf.Ticker("MSFT")
-        history = ticker.history(period="1mo")
+        result = ticker.history(period="1mo")
 
-        assert history is not None
+        assert isinstance(result, tuple)
+        assert len(result) == 2
 
-    def test_history_non_empty_for_valid_symbol(self):
-        """history should return non-empty data for valid symbols"""
+    def test_history_tuple_contains_price_and_dividends(self):
+        """history tuple should contain (prices_df, dividends_df)"""
         ticker = yf.Ticker("MSFT")
-        history = ticker.history(period="1mo")
+        hist, dividends = ticker.history(period="1mo")
 
-        assert not history.empty
+        assert hist is not None
+        assert dividends is not None
 
-    def test_history_has_expected_columns(self):
-        """history should have expected price columns"""
+    def test_history_prices_dataframe_structure(self):
+        """history prices dataframe should have expected structure"""
         ticker = yf.Ticker("MSFT")
-        history = ticker.history(period="1mo")
+        hist, dividends = ticker.history(period="1mo")
 
+        assert not hist.empty
         expected_cols = ["Open", "High", "Low", "Close", "Volume"]
         for col in expected_cols:
-            assert col in history.columns
+            assert col in hist.columns
+
+    def test_history_prices_does_not_contain_dividends(self):
+        """history prices dataframe should NOT contain Dividends column"""
+        ticker = yf.Ticker("MSFT")
+        hist, dividends = ticker.history(period="1mo")
+
+        assert "Dividends" not in hist.columns
+
+    def test_history_dividends_dataframe_structure(self):
+        """history dividends dataframe should have expected structure"""
+        ticker = yf.Ticker("MSFT")
+        hist, dividends = ticker.history(period="1mo")
+
+        assert isinstance(dividends, type(hist))
 
     def test_history_empty_for_invalid_symbol(self):
         """history should return empty DataFrame for invalid symbols"""
         ticker = yf.Ticker("INVALID_SYMBOL_12345")
-        history = ticker.history(period="1mo")
+        hist, dividends = ticker.history(period="1mo")
 
-        assert history is not None
-        assert history.empty
+        assert hist is not None
+        assert hist.empty
 
     def test_history_with_various_periods(self):
         """history should work with different period values"""
@@ -109,8 +126,8 @@ class TestTickerHistory:
         ticker = yf.Ticker("MSFT")
 
         for period in periods:
-            history = ticker.history(period=period)
-            assert history is not None
+            hist, dividends = ticker.history(period=period)
+            assert hist is not None
 
     def test_history_with_interval(self):
         """history should work with different intervals"""
@@ -118,70 +135,68 @@ class TestTickerHistory:
         ticker = yf.Ticker("MSFT")
 
         for interval in intervals:
-            history = ticker.history(period="1y", interval=interval)
-            assert history is not None
+            hist, dividends = ticker.history(period="1y", interval=interval)
+            assert hist is not None
 
     def test_history_with_start_end_dates(self):
         """history should work with start and end dates"""
         ticker = yf.Ticker("MSFT")
-        history = ticker.history(start="2023-01-01", end="2023-02-01")
+        hist, dividends = ticker.history(start="2023-01-01", end="2023-02-01")
 
-        assert history is not None
-        assert not history.empty
+        assert hist is not None
+        assert not hist.empty
 
-    def test_history_with_actions(self):
-        """history should include dividends and splits when actions=True"""
+    def test_history_with_actions_includes_splits(self):
+        """history with actions=True should include StockSplits column"""
         ticker = yf.Ticker("MSFT")
-        history = ticker.history(period="6mo", actions=True)
+        hist, dividends = ticker.history(period="6mo", actions=True)
 
-        assert "Dividends" in history.columns
-        assert "StockSplits" in history.columns
+        assert "StockSplits" in hist.columns
 
-    def test_history_without_actions(self):
-        """history should exclude dividends and splits when actions=False"""
+    def test_history_without_actions_excludes_splits(self):
+        """history with actions=False should exclude StockSplits column"""
         ticker = yf.Ticker("MSFT")
-        history = ticker.history(period="6mo", actions=False)
+        hist, dividends = ticker.history(period="6mo", actions=False)
 
-        assert "Dividends" not in history.columns
-        assert "StockSplits" not in history.columns
+        assert "StockSplits" not in hist.columns
 
     def test_history_different_timezones(self):
         """history should handle different timezones"""
         ticker = yf.Ticker("MSFT")
-        history = ticker.history(period="1mo", tz=None)
+        hist, dividends = ticker.history(period="1mo", tz=None)
 
-        assert history is not None
+        assert hist is not None
 
     def test_history_rounding(self):
         """history should support rounding parameter"""
         ticker = yf.Ticker("MSFT")
-        history = ticker.history(period="1mo", rounding=True)
+        hist, dividends = ticker.history(period="1mo", rounding=True)
 
-        assert history is not None
+        assert hist is not None
 
     def test_history_prepost(self):
         """history should support prepost parameter"""
         ticker = yf.Ticker("MSFT")
-        history = ticker.history(period="1d", prepost=True)
+        hist, dividends = ticker.history(period="1d", prepost=True)
 
-        assert history is not None
+        assert hist is not None
 
     def test_history_multiple_symbols(self):
         """history should work consistently across multiple symbols"""
         symbols = ["MSFT", "AAPL", "GOOGL"]
         for symbol in symbols:
             ticker = yf.Ticker(symbol)
-            history = ticker.history(period="1mo")
+            hist, dividends = ticker.history(period="1mo")
 
-            assert history is not None
+            assert hist is not None
 
     def test_history_cache(self):
         """history should cache results"""
         ticker = yf.Ticker("MSFT")
-        history1 = ticker.history(period="1mo")
-        history2 = ticker.history(period="1mo")
+        hist1, div1 = ticker.history(period="1mo")
+        hist2, div2 = ticker.history(period="1mo")
 
-        assert history1 is history2 or history1.shape == history2.shape
+        assert hist1 is hist2 or hist1.shape == hist2.shape
 
 
 if __name__ == "__main__":
