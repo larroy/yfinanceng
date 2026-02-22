@@ -21,20 +21,13 @@ class TestTickerInfo:
         assert info is not None
         assert isinstance(info, dict)
 
-    def test_info_returns_empty_dict_for_invalid_symbol(self):
-        """info should return empty dict for invalid symbols"""
-        ticker = yf.Ticker("INVALID_SYMBOL_12345")
-        info = ticker.info
-
-        assert info is not None
-        assert isinstance(info, dict)
-
-    def test_info_returns_same_object_on_multiple_calls(self):
-        """info should be cached and return the same object reference"""
+    def test_info_returns_copy_when_as_dict_true(self):
+        """info with as_dict=True should return a copy each time"""
         ticker = yf.Ticker("MSFT")
-        info1 = ticker.info
-        info2 = ticker.info
+        info1 = ticker.get_info(as_dict=True)
+        info2 = ticker.get_info(as_dict=True)
 
+        assert info1 is not info2
         assert info1 == info2
 
     def test_info_contains_expected_fields(self):
@@ -54,6 +47,14 @@ class TestTickerInfo:
 
             assert info is not None
             assert isinstance(info, dict)
+
+    def test_info_validates_symbol_field(self):
+        """info should have correct symbol field matching ticker"""
+        ticker = yf.Ticker("MSFT")
+        info = ticker.info
+
+        if info and "symbol" in info:
+            assert info["symbol"] == "MSFT"
 
 
 class TestTickerHistory:

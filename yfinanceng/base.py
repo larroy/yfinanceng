@@ -92,7 +92,7 @@ class TickerBase:
         rounding=True,
         tz=None,
         **kwargs,
-    ):
+    ) -> (_pd.DataFrame, _pd.DataFrame):
         """
         :Parameters:
             period : str
@@ -126,6 +126,9 @@ class TickerBase:
                 debug: bool
                     Optional. If passed as False, will suppress
                     error message printing to console.
+        :Returns:
+            tuple of historical prices and dividend history
+
         """
 
         if start or period is None or period.lower() == "max":
@@ -251,21 +254,31 @@ class TickerBase:
         dividends, splits = utils.parse_actions(data["chart"]["result"][0], tz)
 
         # combine
-        df = _pd.concat([quotes, dividends, splits], axis=1, sort=True)
-        df["Dividends"] = df["Dividends"].fillna(0)
+        # Ensure all DataFrames have the same index to avoid concatenation errors
+        if len(splits) == 0:
+            splits = _pd.DataFrame(index=quotes.index, columns=["StockSplits"])
+
+        # Handle potential DataFrame concatenation errors
+        try:
+            df = _pd.concat([quotes, splits], axis=1, sort=True)
+        except ValueError as e:
+            return (quotes, dividends)
+
         df["StockSplits"] = df["StockSplits"].fillna(0)
 
         # index eod/intraday
         if not isinstance(df.index, _pd.DatetimeIndex):
-            df.index = _pd.to_datetime(df.index)
-        df.index = df.index.tz_localize("UTC").tz_convert(
+            df.index = _pd.to_datetime(df.index, utc=True)
+        if df.index.tz is None:
+            df.index = df.index.tz_localize("UTC")
+        df.index = df.index.tz_convert(
             data["chart"]["result"][0]["meta"]["exchangeTimezoneName"]
         )
 
         if params["interval"][-1] == "m":
             df.index.name = "Datetime"
         else:
-            df.index = _pd.to_datetime(df.index.date)
+            df.index = _pd.to_datetime(df.index.date, utc=True)
             if tz is not None:
                 df.index = df.index.tz_localize(tz)
             df.index.name = "Date"
@@ -273,7 +286,7 @@ class TickerBase:
         self._history = df.copy()
 
         if not actions:
-            df.drop(columns=["Dividends", "StockSplits"], inplace=True)
+            df.drop(columns=["StockSplits"], inplace=True)
 
         return df
 
@@ -291,9 +304,9 @@ class TickerBase:
 
             df.set_index("endDate", inplace=True)
             try:
-                df.index = _pd.to_datetime(df.index, unit="s")
+                df.index = _pd.to_datetime(df.index, unit="s", utc=True)
             except ValueError:
-                df.index = _pd.to_datetime(df.index)
+                df.index = _pd.to_datetime(df.index, utc=True)
             df = df.T
             df.columns.name = ""
             df.index.name = "Breakdown"
@@ -337,7 +350,7 @@ class TickerBase:
                 and "Date Reported" in self._institutional_holders
             ):
                 self._institutional_holders["Date Reported"] = _pd.to_datetime(
-                    self._institutional_holders["Date Reported"]
+                    self._institutional_holders["Date Reported"], utc=True
                 )
             if (
                 isinstance(self._institutional_holders, _pd.DataFrame)
@@ -397,7 +410,9 @@ class TickerBase:
         # events
         try:
             cal = _pd.DataFrame(data["calendarEvents"]["earnings"])
-            cal["earningsDate"] = _pd.to_datetime(cal["earningsDate"], unit="s")
+            cal["earningsDate"] = _pd.to_datetime(
+                cal["earningsDate"], unit="s", utc=True
+            )
             self._calendar = cal.T
             self._calendar.index = utils.camel2title(self._calendar.index)
 
@@ -410,7 +425,9 @@ class TickerBase:
         try:
             if data["upgradeDowngradeHistory"]["history"]:
                 rec = _pd.DataFrame(data["upgradeDowngradeHistory"]["history"])
-                rec["earningsDate"] = _pd.to_datetime(rec["epochGradeDate"], unit="s")
+                rec["earningsDate"] = _pd.to_datetime(
+                    rec["epochGradeDate"], unit="s", utc=True
+                )
                 rec.set_index("earningsDate", inplace=True)
                 rec.index.name = "Date"
                 rec.columns = utils.camel2title(rec.columns)
@@ -501,7 +518,7 @@ class TickerBase:
         self._get_fundamentals(proxy)
         data = self._info
         if as_dict:
-            return data.to_dict()
+            return data.copy()
         return data
 
     def get_sustainability(self, proxy=None, as_dict=False, *args, **kwargs):

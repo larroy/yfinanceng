@@ -146,7 +146,7 @@ def parse_quotes(data, tz=None):
         }
     )
 
-    quotes.index = _pd.to_datetime(timestamps, unit="s")
+    quotes.index = _pd.to_datetime(timestamps, unit="s", utc=True)
     quotes.sort_index(inplace=True)
 
     if tz is not None:
@@ -163,17 +163,15 @@ def parse_actions(data, tz=None):
         if "dividends" in data["events"]:
             dividends = _pd.DataFrame(data=list(data["events"]["dividends"].values()))
             dividends.set_index("date", inplace=True)
-            dividends.index = _pd.to_datetime(dividends.index, unit="s")
+            dividends.index = _pd.to_datetime(dividends.index, unit="s", utc=True)
             dividends.sort_index(inplace=True)
             if tz is not None:
                 dividends.index = dividends.index.tz_localize(tz)
 
-            dividends.columns = ["Dividends"]
-
         if "splits" in data["events"]:
             splits = _pd.DataFrame(data=list(data["events"]["splits"].values()))
             splits.set_index("date", inplace=True)
-            splits.index = _pd.to_datetime(splits.index, unit="s")
+            splits.index = _pd.to_datetime(splits.index, unit="s", utc=True)
             splits.sort_index(inplace=True)
             if tz is not None:
                 splits.index = splits.index.tz_localize(tz)
